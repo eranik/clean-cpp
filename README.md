@@ -1,8 +1,8 @@
 # copy-cpp
 Base code to be used for new C++ projets.
 
-### Provides following features:
-
+### Features
+Provides following features:
 * Duration for the operations.
 * Showing messages in termianl and logging it to biuld.log.
 * Simply biuld the project: ./build
