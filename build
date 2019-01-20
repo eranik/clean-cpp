@@ -1,0 +1,73 @@
+#!/bin/bash
+
+start_time=$(date +%s.%N)
+PROJECT_NAME="my-app"
+BUILD_TYPE="Release"
+BUILD_DIR="$BUILD_TYPE"
+OUTPUT_DIR=".."
+
+func_help()
+{
+	echo 'c,-c,--clean: clean'
+	echo 'f,-f,--full: clean then build'
+	echo 'no parameter: normal build'
+}
+
+func_clean()
+{
+	echo "Cleaning..."
+	rm -rf ./Release ./Debug ./RelWithDebInfo ./build.log ./my-app ./build.log
+	echo "Cleaning complete."
+}
+
+func_build()
+{
+	mkdir -p "$BUILD_DIR"
+	cd "$BUILD_DIR"
+
+	cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" .. 2>&1 | tee ../build.log
+	make -j 2>&1 | tee -a ../build.log
+	cp ./my-app $OUTPUT_DIR
+	sync
+}
+
+func_calculate_duration()
+{
+	duration=$(bc <<< "$end_time - $start_time")
+	local is_clean_only=$1
+	if [ $is_clean_only ]
+	then 
+		echo
+		echo '################################################################################'
+		echo "Duration: $(printf '%.6f' $duration) (s)"
+		echo '################################################################################'
+		echo
+		return
+	fi
+
+	echo | tee -a build.log
+	echo '################################################################################' | tee -a build.log
+	echo "Duration: $(printf '%.6f' $duration) (s)" | tee -a build.log
+	echo '################################################################################' | tee -a build.log
+	echo | tee -a build.log
+}
+
+if [ "$1" = "--clean" ] || [ "$1" = "-c" ] || [ "$1" = "c" ]
+then
+	func_clean
+	end_time=$(date +%s.%N)
+	func_calculate_duration true
+	exit 0
+elif [ "$1" = "--full" ] || [ "$1" = "-f" ] || [ "$1" = "f" ]
+then
+	func_clean
+	func_build
+elif [ "$1" != "" ]
+then
+	func_help
+else
+	func_build
+fi
+end_time=$(date +%s.%N)
+func_calculate_duration
+exit 0
