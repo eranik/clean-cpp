@@ -1,4 +1,4 @@
-# copy-cpp
+# clean-cpp
 Base code to be used for new C++ projets.
 
 ### Features
