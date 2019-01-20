@@ -1,5 +1,9 @@
 # clean-cpp
-Base code to be used for new C++ projets.
+
+
+### The no clutter base code for C++ projects with cmake.
+
+This is a base code to be used for new C++ projets.
 
 ### Features
 Provides following features:
